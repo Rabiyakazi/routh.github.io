@@ -1,0 +1,747 @@
+<html><head><base href="." />
+<meta charset="UTF-8">
+<title>Hospital Queue Assistant</title>
+<style>
+:root {
+  --primary: #2c5282;
+  --secondary: #4299e1;
+  --accent: #90cdf4;
+  --background: #f7fafc;
+  --text: #2d3748;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1rem;
+  object-fit: contain; /* This ensures the logo maintains its aspect ratio */
+  border-radius: 8px; /* Optional: adds slight rounding to the corners */
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hospital-hours {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: glow 2s infinite alternate;
+}
+
+.hospital-hours h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.hours-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(66, 153, 225, 0.8);
+  }
+}
+
+.chat-container {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--secondary);
+}
+
+.departments {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.department-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--accent);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.department-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--secondary);
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: var(--secondary);
+}
+
+.confirmation {
+  background: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.confirmation-content {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.confirmation-content.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.success-checkmark {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: none;
+}
+
+.success-checkmark .check-icon {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  border-radius: 50%;
+  box-sizing: content-box;
+  border: 4px solid #4CAF50;
+}
+
+.success-checkmark .check-icon::before {
+  top: 3px;
+  left: -2px;
+  width: 30px;
+  transform-origin: 100% 50%;
+  border-radius: 100px 0 0 100px;
+}
+
+.success-checkmark .check-icon::after {
+  top: 0;
+  left: 30px;
+  width: 60px;
+  transform-origin: 0 50%;
+  border-radius: 0 100px 100px 0;
+  animation: rotate-circle 4.25s ease-in;
+}
+
+.success-checkmark .check-icon::before, .success-checkmark .check-icon::after {
+  content: '';
+  height: 100px;
+  position: absolute;
+  background: #FFFFFF;
+  transform: rotate(-45deg);
+}
+
+.success-checkmark .check-icon .icon-line {
+  height: 5px;
+  background-color: #4CAF50;
+  display: block;
+  border-radius: 2px;
+  position: absolute;
+  z-index: 10;
+}
+
+.success-checkmark .check-icon .icon-line.line-tip {
+  top: 46px;
+  left: 14px;
+  width: 25px;
+  transform: rotate(45deg);
+  animation: icon-line-tip 0.75s;
+}
+
+.success-checkmark .check-icon .icon-line.line-long {
+  top: 38px;
+  right: 8px;
+  width: 47px;
+  transform: rotate(-45deg);
+  animation: icon-line-long 0.75s;
+}
+
+@keyframes icon-line-tip {
+  0% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  54% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  70% {
+    width: 50px;
+    left: -8px;
+    top: 37px;
+  }
+  84% {
+    width: 17px;
+    left: 21px;
+    top: 48px;
+  }
+  100% {
+    width: 25px;
+    left: 14px;
+    top: 45px;
+  }
+}
+
+@keyframes icon-line-long {
+  0% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  65% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  84% {
+    width: 55px;
+    right: 0px;
+    top: 35px;
+  }
+  100% {
+    width: 47px;
+    right: 8px;
+    top: 38px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.notification-options {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border: 2px dashed var(--accent);
+}
+
+.notification-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.notification-options input[type="radio"] {
+  width: auto;
+}
+
+/* Add new styles for admin notification */
+.admin-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+}
+
+.admin-notification.show {
+  transform: translateX(0);
+}
+
+.notification-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  z-index: 999;
+}
+
+#adminNotificationList {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 998;
+}
+
+.notification-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--accent);
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.home-btn {
+  background: var(--secondary);
+}
+
+.timer {
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--accent);
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div class="header animate">
+    <img src="/pngtree-hospital-logo-image_70558.jpg" alt="City General Hospital logo - stylized medical cross with green vertical and blue horizontal lines" class="logo">
+    <h1>Welcome to City General Hospital</h1>
+    <p>Appointment Booking System</p>
+  </div>
+
+  <div class="hospital-hours animate">
+    <h2>Hospital Hours</h2>
+    <div class="hours-grid">
+      <div class="hours-card">
+        <h3>Emergency Services</h3>
+        <p>24/7 Available</p>
+      </div>
+      <div class="hours-card">
+        <h3>General Hours</h3>
+        <p>Mon-Fri: 8:00 AM - 8:00 PM</p>
+        <p>Sat-Sun: 9:00 AM - 5:00 PM</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-container animate">
+    <div id="booking-form">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter your full name">
+      </div>
+
+      <div class="form-group">
+        <label for="contact">Email or Phone Number</label>
+        <input type="text" id="contact" placeholder="Enter your email or phone number">
+      </div>
+
+      <div class="form-group">
+        <label>Select Department</label>
+        <div class="departments">
+          <div class="department-card" onclick="selectDepartment('General Medicine')">
+            <h3>General Medicine</h3>
+          </div>
+          <div class="department-card" onclick="selectDepartment('Pediatrics')">
+            <h3>Pediatrics</h3>
+          </div>
+          <div class="department-card" onclick="selectDepartment('Cardiology')">
+            <h3>Cardiology</h3>
+          </div>
+          <div class="department-card" onclick="selectDepartment('Orthopedics')">
+            <h3>Orthopedics</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Preferred Date</label>
+        <input type="date" id="date">
+      </div>
+
+      <div class="form-group">
+        <label for="time">Preferred Time</label>
+        <input type="time" id="time">
+      </div>
+
+      <div class="form-group notification-options">
+        <label>Reminder Notification:</label>
+        <label>
+          <input type="radio" name="reminder" value="60"> 1 hour before
+        </label>
+        <label>
+          <input type="radio" name="reminder" value="30"> 30 minutes before
+        </label>
+      </div>
+
+      <button class="btn" onclick="confirmAppointment()">Book Appointment</button>
+    </div>
+
+    <div id="confirmation" class="confirmation" style="display: none;">
+      <div class="nav-buttons animate">
+        <button class="btn home-btn" onclick="goHome()">Home</button>
+        <span id="appointmentTimer" class="timer"></span>
+      </div>
+      <div class="success-checkmark">
+        <div class="check-icon">
+          <span class="icon-line line-tip"></span>
+          <span class="icon-line line-long"></span>
+        </div>
+      </div>
+      <div class="confirmation-content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="notification-badge" onclick="toggleNotifications()">
+  Admin Notifications (<span id="notificationCount">0</span>)
+</div>
+
+<div id="adminNotificationList"></div>
+
+<script>
+let selectedDepartment = '';
+
+function selectDepartment(dept) {
+    selectedDepartment = dept;
+    document.querySelectorAll('.department-card').forEach(card => {
+        card.style.borderColor = card.querySelector('h3').textContent === dept ? 
+            'var(--secondary)' : 'var(--accent)';
+    });
+}
+
+function scheduleNotification(appointmentTime, reminderMinutes) {
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+        return;
+    }
+
+    Notification.requestPermission().then(function(permission) {
+        if (permission === "granted") {
+            const appointmentDate = new Date(appointmentTime);
+            const notificationTime = new Date(appointmentDate.getTime() - (reminderMinutes * 60000));
+            
+            const now = new Date();
+            const timeUntilNotification = notificationTime.getTime() - now.getTime();
+
+            if (timeUntilNotification > 0) {
+                setTimeout(() => {
+                    new Notification("Appointment Reminder", {
+                        body: `Your appointment is in ${reminderMinutes} minutes!`,
+                        icon: "/hospital-icon.png"
+                    });
+                }, timeUntilNotification);
+            }
+        }
+    });
+}
+
+function confirmAppointment() {
+    const name = document.getElementById('name').value;
+    const contact = document.getElementById('contact').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const reminderRadios = document.getElementsByName('reminder');
+    let selectedReminder = null;
+
+    for (const radio of reminderRadios) {
+        if (radio.checked) {
+            selectedReminder = radio.value;
+            break;
+        }
+    }
+
+    if (!name || !contact || !selectedDepartment || !date || !time) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const appointmentData = {
+        name,
+        contact,
+        department: selectedDepartment,
+        date,
+        time,
+        reminder: selectedReminder
+    };
+
+    // Add admin notification
+    addAdminNotification(appointmentData);
+
+    const queuePosition = Math.floor(Math.random() * 10) + 1;
+    
+    if (selectedReminder) {
+        scheduleNotification(`${date}T${time}`, parseInt(selectedReminder));
+    }
+
+    // First update the confirmation div content
+    const confirmationDiv = document.getElementById('confirmation');
+    const content = `
+        <div class="nav-buttons animate">
+            <button class="btn home-btn" onclick="goHome()">Home</button>
+            <span id="appointmentTimer" class="timer"></span>
+        </div>
+        <div class="success-checkmark">
+            <div class="check-icon">
+                <span class="icon-line line-tip"></span>
+                <span class="icon-line line-long"></span>
+            </div>
+        </div>
+        <div class="confirmation-content">
+            <h3>Appointment Confirmed!</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Contact:</strong> ${contact}</p>
+            <p><strong>Department:</strong> ${selectedDepartment}</p>
+            <p><strong>Date:</strong> ${date}</p>
+            <p><strong>Time:</strong> ${time}</p>
+            <p><strong>Queue Position:</strong> ${queuePosition}</p>
+            <p><strong>Reminder Set:</strong> ${selectedReminder ? `${selectedReminder} minutes before` : 'No reminder'}</p>
+            <p>Please arrive 10 minutes before your scheduled time.</p>
+            <div class="button-group">
+                <button class="btn" onclick="bookAnother()">Book Another Appointment</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('booking-form').style.display = 'none';
+    confirmationDiv.innerHTML = content;
+    confirmationDiv.style.display = 'block';
+
+    // Animation sequence with timer initialization
+    setTimeout(() => {
+        document.querySelector('.success-checkmark').style.display = 'block';
+        setTimeout(() => {
+            const confirmationContent = document.querySelector('.confirmation-content');
+            if (confirmationContent) {
+                confirmationContent.classList.add('show');
+            }
+            // Start timer after elements are created
+            updateAppointmentTimer(`${date}T${time}`);
+        }, 1000);
+    }, 100);
+}
+
+function goHome() {
+    document.getElementById('booking-form').style.display = 'block';
+    document.getElementById('confirmation').style.display = 'none';
+    resetForm();
+}
+
+function bookAnother() {
+    resetForm();
+    document.getElementById('booking-form').style.display = 'block';
+    document.getElementById('confirmation').style.display = 'none';
+}
+
+function resetForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('contact').value = '';
+    document.getElementById('date').value = '';
+    document.getElementById('time').value = '';
+    selectedDepartment = '';
+    document.querySelectorAll('.department-card').forEach(card => {
+        card.style.borderColor = 'var(--accent)';
+    });
+    document.querySelectorAll('input[name="reminder"]').forEach(radio => {
+        radio.checked = false;
+    });
+}
+
+function updateAppointmentTimer(appointmentTime) {
+    // Get timer element
+    const timer = document.getElementById('appointmentTimer');
+    if (!timer) return; // Exit if timer element doesn't exist yet
+
+    const interval = setInterval(() => {
+        // Check if timer still exists before updating
+        const timerElement = document.getElementById('appointmentTimer');
+        if (!timerElement) {
+            clearInterval(interval);
+            return;
+        }
+
+        const now = new Date().getTime();
+        const appointmentDate = new Date(appointmentTime).getTime();
+        const distance = appointmentDate - now;
+
+        if (distance < 0) {
+            clearInterval(interval);
+            timerElement.innerHTML = "Appointment Time!";
+            return;
+        }
+
+        const hours = Math.floor(distance / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        timerElement.innerHTML = `Time until appointment: ${hours}h ${minutes}m`;
+    }, 1000);
+}
+
+// Admin notification functionality
+let adminNotifications = [];
+let notificationCount = 0;
+
+function addAdminNotification(appointment) {
+    const notification = {
+        id: Date.now(),
+        time: new Date().toLocaleTimeString(),
+        appointment: appointment
+    };
+    
+    adminNotifications.unshift(notification);
+    notificationCount++;
+    updateNotificationBadge();
+    updateNotificationList();
+    
+    // Show temporary notification
+    const tempNotif = document.createElement('div');
+    tempNotif.className = 'admin-notification';
+    tempNotif.innerHTML = `
+        <h4>New Appointment Booked!</h4>
+        <p>Patient: ${appointment.name}</p>
+        <p>Department: ${appointment.department}</p>
+        <p>Time: ${appointment.time}</p>
+    `;
+    document.body.appendChild(tempNotif);
+    
+    setTimeout(() => {
+        tempNotif.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        tempNotif.classList.remove('show');
+        setTimeout(() => {
+            tempNotif.remove();
+        }, 300);
+    }, 5000);
+}
+
+function updateNotificationBadge() {
+    document.getElementById('notificationCount').textContent = notificationCount;
+}
+
+function updateNotificationList() {
+    const list = document.getElementById('adminNotificationList');
+    list.innerHTML = adminNotifications.map(notif => `
+        <div class="notification-item">
+            <p><strong>${notif.time}</strong></p>
+            <p>Patient: ${notif.appointment.name}</p>
+            <p>Department: ${notif.appointment.department}</p>
+            <p>Appointment: ${notif.appointment.date} ${notif.appointment.time}</p>
+        </div>
+    `).join('');
+}
+
+function toggleNotifications() {
+    const list = document.getElementById('adminNotificationList');
+    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+}
+
+// Set minimum date to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date').min = today;
+</script>
+
+</body></html>
